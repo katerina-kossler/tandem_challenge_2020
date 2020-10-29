@@ -65,8 +65,64 @@ def process_question_data(json_questions):
                 
     return (questions, question_options, question_answers) 
 
-input_file = get_input_file()
-questions, question_options, question_answers = process_question_data(input_file)
-print(questions[1])
-print(question_options[1])
-print(question_answers[1])
+ 
+def is_game_end_condition_met(all_questions, answered_questions):
+    """Checks if either 10 questions have been answered or all available questions have been answered."""
+    available_questions = len(all_questions.keys())
+    used_questions = len(answered_questions)
+    
+    if (used_questions == 10) or (used_questions == available_questions):
+        return True
+    else:
+        return False
+
+
+def display_question_options(question_options):
+    pass
+
+
+def reveal_correct_answer():
+    pass
+
+
+def update_score(answer, correct_answer, score):
+    pass
+
+
+def check_game_state(score, answered_questions):
+    pass
+
+
+def restart_game():
+    pass
+
+
+def end_game(score):
+    pass
+
+
+
+def play_game():
+    try:
+        # Game is initialized by validating the input file, building the 'question bank' and initializing the score and 
+        # the answered questions.
+        input_file = get_input_file()
+        questions, question_options, question_answers = process_question_data(input_file)
+        score = 0
+        answered_questions = set()
+        
+        while not is_game_end_condition_met(questions, answered_questions):
+            
+        
+        
+        
+    except KeyboardInterrupt:
+        print("Your final score is {} out of {}! Please come play again!".format(score, len(answered_questions)))
+        
+
+# The game is played until the first of the following conditions is met:
+# 1) 10 questions are answered
+# 2) All available questions are answered
+# 3) The game is exited with CTRL+C or delete
+# At game end, the current score is provided.  If condition 1 or 2 were reached, the player is asked if they would like to 
+# play again.  If not, the game exits.
