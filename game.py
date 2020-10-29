@@ -67,3 +67,6 @@ def process_question_data(json_questions):
 
 input_file = get_input_file()
 questions, question_options, question_answers = process_question_data(input_file)
+print(questions[1])
+print(question_options[1])
+print(question_answers[1])
