@@ -66,8 +66,8 @@ def process_question_data(json_questions):
     return (questions, question_options, question_answers) 
 
  
-def is_game_end_condition_met(all_questions, answered_questions):
-    """Checks if either 10 questions have been answered or all available questions have been answered."""
+def is_game_end(all_questions, answered_questions):
+    """Checks if either 10 questions have been answered or all (available) questions have been answered."""
     available_questions = len(all_questions.keys())
     used_questions = len(answered_questions)
     
@@ -77,11 +77,28 @@ def is_game_end_condition_met(all_questions, answered_questions):
         return False
 
 
-def display_question_options(question_options):
+def select_question(questions):
+    
+    
+    return selected_question
+
+
+def display_question_and_options(current_question,questions,question_options):
+    """"""
     pass
 
 
-def reveal_correct_answer():
+def get_user_answer(options):
+    """"""
+    pass
+
+def is_answer_correct():
+    """"""
+    pass
+
+
+def reveal_correct_answer(answer, correct):
+    """"""
     pass
 
 
@@ -89,40 +106,54 @@ def update_score(answer, correct_answer, score):
     pass
 
 
-def check_game_state(score, answered_questions):
+def display_score(score, answered_questions, final=False):
+    if final:
+        return "Your final score is {} out of {}!".format(score, len(answered_questions))
+    else:
+        return "Your Score is now {}".format()
+
+
+def is_user_playing_again():
     pass
-
-
-def restart_game():
-    pass
-
-
-def end_game(score):
-    pass
-
 
 
 def play_game():
+    """Holds game logic and continues question asking and answering until the first of the following conditions is met:
+        1) 10 questions are answered
+        2) All available questions are answered
+        3) The game is exited with CTRL+C or Delete
+
+        At game end, the current score is provided.  If condition 1 or 2 were reached, the player is asked if they would like to play again.  If not, the game exits.
+    """
+    
     try:
-        # Game is initialized by validating the input file, building the 'question bank' and initializing the score and 
-        # the answered questions.
-        input_file = get_input_file()
-        questions, question_options, question_answers = process_question_data(input_file)
-        score = 0
-        answered_questions = set()
+        # Playing is used to allow the user to continue playing rounds of trivia
+        playing = True
         
-        while not is_game_end_condition_met(questions, answered_questions):
+        while playing:
+            # Game is initialized by validating the input file, building the 'question bank' and initializing the score and 
+            # the answered questions.
+            input_file = get_input_file()
+            questions, question_options, question_answers = process_question_data(input_file)
+            score = 0
+            answered_questions = set()
             
-        
-        
-        
+            while not is_game_end(questions, answered_questions):
+                # chose question
+                # wait for user answer
+                # validate user answer
+                # compare answer to user answer
+                # if correct update and display score
+                # if incorrect, reveal answer
+            
+            display_score(score, answered_questions, True)
+            
+            # ask the user if they would like to play again
+            playing = is_user_playing_again()
+            
+            
     except KeyboardInterrupt:
-        print("Your final score is {} out of {}! Please come play again!".format(score, len(answered_questions)))
+        display_score(score, answered_questions, True)
         
 
-# The game is played until the first of the following conditions is met:
-# 1) 10 questions are answered
-# 2) All available questions are answered
-# 3) The game is exited with CTRL+C or delete
-# At game end, the current score is provided.  If condition 1 or 2 were reached, the player is asked if they would like to 
-# play again.  If not, the game exits.
+play_game()
