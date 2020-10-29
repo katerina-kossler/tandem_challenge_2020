@@ -14,4 +14,8 @@ class InputFileException(Exception):
         self.message = "'{}' key is missing from question {}".format(key, question_id)
         super().__init__(self.message)
 
-
+class InputArgumentsException(Exception):
+    """Exception raised by errors in the arguments provided to the game."""
+    def __init__(self):
+        self.message = "Too many arguments provided. Provide the game with one JSON file of questions."
+        super().__init__(self.message)

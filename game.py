@@ -1,13 +1,30 @@
 import sys
 import json
-from exceptions import InputFileException
+from exceptions import InputFileException, InputArgumentsException
 
 # The following 3 keys are expected for each queston in the "json_questions" JSON-format, input file.
 QUESTION_KEY = "question"
 INCORRECT_OPTION_KEY = "incorrect"
 ANSWER_KEY = "correct"
+# Default question bank should be provided if not additional / custom questions are used.
+DEFAULT_FILE = "Apprentice_TandemFor400_Data.json"
 
 
+# The arguments passed in to the command line to run the game are validated to a one file input.
+def get_input_file():
+    """Validates that the question data is provided as the only other command line argument."""
+    arguments = len(sys.argv)
+    
+    if arguments == 1:
+        filename = DEFAULT_FILE
+    elif arguments == 2:
+        filename = sys.argv[1]
+    else:
+        raise InputArgumentsException
+    
+    return filename
+    
+    
 # From the input file (json_questions), questions are parsed and validated into the "question_bank" of three 
 # dictionaries for questions, question_options, and question_answers.
 def get_key(key, question, question_id):
@@ -44,10 +61,9 @@ def process_question_data(json_questions):
                 questions[current_question_id] = get_key(QUESTION_KEY, current_question_map, current_question_id)
                 question_options[current_question_id] = set(get_key(INCORRECT_OPTION_KEY, current_question_map, current_question_id))
                 question_answers[current_question_id] = get_key(ANSWER_KEY, current_question_map, current_question_id)
-                question_options[current_question_id] = question_options[current_question_id].add(question_answers[current_question_id])
+                question_options[current_question_id].add(question_answers[current_question_id])
                 
     return (questions, question_options, question_answers) 
 
-
-process_question_data(sys.argv[1])
-
+input_file = get_input_file()
+questions, question_options, question_answers = process_question_data(input_file)
