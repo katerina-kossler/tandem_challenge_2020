@@ -62,12 +62,12 @@ also list any system dependencies (e.g. Ruby 2.3, Erlang runtime, JDK8, etc).
   Function to validate file upload. 
 #### To-do list:
 - [X] Process JSON File: need to parse, store, validate (num of Q and options for each Q)
-- [ ] Select current question
-- [ ] Score keeping / update score
-- [ ] Determine game state (question number and score)
-- [ ] Validate user selection / input
-- [ ] Check the selected answer
-- [ ] Provide end of game score and option to replay with current input set
+- [X] Select current question
+- [X] Score keeping / update score
+- [X] Determine game state (question number and score)
+- [X] Validate user selection / input
+- [X] Check the selected answer
+- [X] Provide end of game score and option to replay with current input set
 
 #### Expanded Assumptions
 1. A round of trivia has 10 Questions
