@@ -1,6 +1,8 @@
-import sys
-import json
+from os import name, system
+from sys import argv, exit
+from json import load
 from exceptions import InputFileException, InputArgumentsException
+from random import randrange
 
 # The following 3 keys are expected for each queston in the "json_questions" JSON-format, input file.
 QUESTION_KEY = "question"
@@ -10,15 +12,26 @@ ANSWER_KEY = "correct"
 DEFAULT_FILE = "Apprentice_TandemFor400_Data.json"
 
 
+def clear_terminal_window():
+    """Clears the terminal for clarity based on the os name"""
+    # for windows 
+    if name == 'nt': 
+        system('cls') 
+  
+    # for mac and linux(here, os.name is 'posix') 
+    else: 
+        system('clear')
+
+
 # The arguments passed in to the command line to run the game are validated to a one file input.
 def get_input_file():
     """Validates that the question data is provided as the only other command line argument."""
-    arguments = len(sys.argv)
+    arguments = len(argv)
     
     if arguments == 1:
         filename = DEFAULT_FILE
     elif arguments == 2:
-        filename = sys.argv[1]
+        filename = argv[1]
     else:
         raise InputArgumentsException
     
@@ -49,22 +62,21 @@ def process_question_data(json_questions):
     3. question_answers: <QUESTION_ID>:<ANSWER_STRING>
         - makes for relatively quick answer checking
     """
-
     questions = {}
     question_options = {}
     question_answers = {}
     
     if json_questions:
         with open(json_questions) as json_file:
-            data = json.load(json_file)
-            for current_question_id, current_question_map in enumerate(data):
+            data = load(json_file)
+            for current_question_id, current_question_map in enumerate(data, 1):
                 questions[current_question_id] = get_key(QUESTION_KEY, current_question_map, current_question_id)
                 question_options[current_question_id] = set(get_key(INCORRECT_OPTION_KEY, current_question_map, current_question_id))
                 question_answers[current_question_id] = get_key(ANSWER_KEY, current_question_map, current_question_id)
                 question_options[current_question_id].add(question_answers[current_question_id])
                 
     return (questions, question_options, question_answers) 
-
+ 
  
 def is_game_end(all_questions, answered_questions):
     """Checks if either 10 questions have been answered or all (available) questions have been answered."""
@@ -77,20 +89,52 @@ def is_game_end(all_questions, answered_questions):
         return False
 
 
-def select_question(questions):
-    
-    
+def select_question(questions, answered_questions):
+    """Selects a new question at random from a set of question numbers until an unasked question is chosen"""
+    limit = len(questions)
+    seen = True
+    while seen:
+        selected_question = randrange(0, limit)
+        if not selected_question in answered_questions:
+            seen = False
+            print(selected_question)
     return selected_question
 
 
-def display_question_and_options(current_question,questions,question_options):
-    """"""
-    pass
+def display_question_and_options(current_question,current_options):
+    """Clears the current screen, and displays the current question and the answer options in random order.
+    
+    A dictionary of the question's available answer options is build with key's corresponding to the order number provided.
+    
+    If the user enters the option number or types in the actual option key 
+    """
+    ordered_options = {}
+    clear_terminal_window()
+    print(current_question)
+    for count, option in enumerate(current_options, 1):
+        print("{}. {}".format(count,option))
+        ordered_options[str(count)] = option
+    return ordered_options
+    
+    
+def get_user_answer(ordered_options):
+    """Waits for the user to answer the question and rejects the answer if it is not one of the provided options.
+    
+    The option number or the exact string for any of the displayed options is considered a valid answer choice.
+    """
+    valid = False
+    while not valid:
+        user_answer = input("Your answer: ")
+        valid_choice = ordered_options.get(user_answer, None)
+        if valid_choice:
+            valid = True
+        elif user_answer in ordered_options.values(): 
+            valid = True
+            valid_choice = user_answer
+        else:
+            print("{} is not an answer option. Please try again.".format(user_answer))
+    return valid_choice
 
-
-def get_user_answer(options):
-    """"""
-    pass
 
 def is_answer_correct():
     """"""
@@ -108,13 +152,53 @@ def update_score(answer, correct_answer, score):
 
 def display_score(score, answered_questions, final=False):
     if final:
-        return "Your final score is {} out of {}!".format(score, len(answered_questions))
+        return " Your final score is {} out of {} questions!".format(score, len(answered_questions))
     else:
         return "Your Score is now {}".format()
+        
+        
+def reveal_correct_answer(answer, correct):
+    """Shows the correct answer"""
+    pass
+
+
+def play_trivia_question(score, answered_questions, questions, question_options, question_answers):
+    """Takes in all the current game data and:
+    
+    1. Choose a question that has not been asked.
+    2. Display the trivia question.
+    3. Take in a user answer and check that it is valid.
+    4. Compare the user's answer to the question's answer.
+    5. Increment the score by one if correct, or reveal the correct answer if the answer is incorrect.
+    """                                                   
+    current = select_question(questions, answered_questions)
+    current_question = questions[current]
+    current_options = question_options[current]
+    current_answer = question_answers[current]
+    
+    # The options are returned as a dictionary of their option number by order of display to the user.
+    ordered_options = display_question_and_options(current_question,current_options)
+    
+    user_answer = get_user_answer(ordered_options)
+    
+    # correct = is_answer_correct(user_answer)
+    
+    exit() # remove when not testing
+    # wait for user answer
+    # validate user answer
+    # compare answer to user answer
+    # if correct update and display score
+    # if is_answer_correct():
+    #     display_score(score, answered_questions, False)
+    # if incorrect, reveal answer
+    # else:
+            
+    return score, answered_questions
 
 
 def is_user_playing_again():
-    pass
+    """Asks if the user wants to play again by asking """
+    print("")
 
 
 def play_game():
@@ -125,9 +209,8 @@ def play_game():
 
         At game end, the current score is provided.  If condition 1 or 2 were reached, the player is asked if they would like to play again.  If not, the game exits.
     """
-    
     try:
-        # Playing is used to allow the user to continue playing rounds of trivia
+        # Playing is used to allow the user to continue playing rounds of trivia.
         playing = True
         
         while playing:
@@ -137,23 +220,37 @@ def play_game():
             questions, question_options, question_answers = process_question_data(input_file)
             score = 0
             answered_questions = set()
+            final_score_message = display_score(score, answered_questions, True)
             
             while not is_game_end(questions, answered_questions):
+                score, answered_questions = play_trivia_question(score, answered_questions, questions, question_options, question_answers)
+                                                                 
                 # chose question
                 # wait for user answer
                 # validate user answer
                 # compare answer to user answer
                 # if correct update and display score
                 # if incorrect, reveal answer
+                
+                # A final answer message is made in case this is 
+                # the last question to answer or if there is a
+                # KeyboardInterupt used to exit the game.
+                final_score_message = display_score(score, answered_questions, True)
             
-            display_score(score, answered_questions, True)
+            # At the end of a round of trivia, the final score is provided to the user.
             
-            # ask the user if they would like to play again
+            # The user is asked if they would like to play again once the current round ends.
             playing = is_user_playing_again()
             
             
     except KeyboardInterrupt:
-        display_score(score, answered_questions, True)
-        
+        # If a round is exited prematurely, the current score is displayed.
+        print(final_score_message)
+
+
+    except Exception as e:
+        if hasattr(e, "message"):
+            print(e.message)
+
 
 play_game()
