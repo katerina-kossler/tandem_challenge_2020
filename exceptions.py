@@ -1,7 +1,7 @@
 # Custom exceptions in this file are to be used for supporting the validation of game.py .
 
 
-class InputFileException(Exception):
+class InputFileError(Exception):
     """Exception raised for errors in the input file.
     
     Attributes: 
@@ -14,7 +14,7 @@ class InputFileException(Exception):
         self.message = "'{}' key is missing from question {}".format(key, question_id)
         super().__init__(self.message)
 
-class InputArgumentsException(Exception):
+class InputArgumentsError(Exception):
     """Exception raised by errors in the arguments provided to the game."""
     def __init__(self):
         self.message = "Too many arguments provided. Provide the game with one JSON file of questions."

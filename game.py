@@ -1,7 +1,7 @@
 from os import name, system
 from sys import argv, exit
 from json import load
-from exceptions import InputFileException, InputArgumentsException
+from exceptions import InputFileError, InputArgumentsError
 from random import randrange
 
 # The following 3 keys are expected for each queston in the "json_questions" JSON-format, input file.
@@ -23,15 +23,13 @@ def clear_terminal_window():
 # The arguments passed in to the command line to run the game are validated to a one file input.
 def get_input_file():
     """Validates that the question data is provided as the only other command line argument."""
-    arguments = len(argv)
-    if arguments == 1:
-        filename = DEFAULT_FILE
-    elif arguments == 2:
-        filename = argv[1]
+    if len(argv) == 1:
+        return DEFAULT_FILE
+    elif len(argv) == 2:
+        return argv[1]
     else:
-        raise InputArgumentsException
-    return filename
-    
+        raise InputArgumentsError ## look into ValueError instead here
+#               ^^^^^^  
     
 # From the input file (json_questions), questions are parsed and validated into the "question_bank" of three 
 # dictionaries for questions, question_options, and question_answers.
@@ -40,7 +38,7 @@ def get_key(key, question, question_id):
     if question.get(key, None):
         return question[key]
     else:
-        raise InputFileException(key, question_id)
+        raise InputFileError(key, question_id)
 
 
 def process_question_data(json_questions):
@@ -69,7 +67,6 @@ def process_question_data(json_questions):
                 question_answers[current_question_id] = get_key(ANSWER_KEY, current_question_map, current_question_id)
                 question_options[current_question_id].add(question_answers[current_question_id])
     return (questions, question_options, question_answers) 
-
 
 
 def pause_for_user():
@@ -257,7 +254,5 @@ def play_game():
         if hasattr(e, "message"):
             print(e.message)
 
-    # exit() # remove when not testing
-
-
 play_game()
+# exit() # remove when not testing
