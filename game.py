@@ -69,6 +69,35 @@ def process_question_data(json_questions):
                 question_answers[current_question_id] = get_key(ANSWER_KEY, current_question_map, current_question_id)
                 question_options[current_question_id].add(question_answers[current_question_id])
     return (questions, question_options, question_answers) 
+
+
+
+def pause_for_user():
+    """Waits for user to hit enter to continue so they have time to review the current screen."""
+    input("Hit enter when you are ready to continue.")
+     
+ 
+def explain_game():
+    """Outputs the basic gameplay for this trivia game"""
+    print("""
+    Welcome to the hottest new CLI game to hit your terminal!
+     ______               __               ___              ____  ___   ___   __
+    /_  __/___ _ ___  ___/ /___  __ _     / _/___   ____   / / / / _ \ / _ \ / /
+     / /  / _ `// _ \/ _  // -_)/  ' \   / _// _ \ / __/  /_  _// // // // //_/ 
+    /_/   \_,_//_//_/\_,_/ \__//_/_/_/  /_/  \___//_/      /_/  \___/ \___/(_)  
+                                                                                
+    """)
+    print("""
+    Using the JSON file you passed in as an argument (or the default file 
+    if you didn't provide one), we will build a randomized round of trivia
+    for you to answer!
+    
+    Each round of trivia will consist of 10 questions (if possible).
+    For each question, type in your selection and hit enter.
+        
+    Leave at any point using Ctrl+C. 
+    """)
+    pause_for_user()
  
  
 def is_game_end(all_questions, answered_questions):
@@ -178,11 +207,6 @@ def play_trivia_question(score, answered_questions, questions, question_options,
         reveal_correct_answer(current_question, current_answer)
     return score, answered_questions
 
-
-def pause_for_user():
-    """Waits for user to hit enter to continue so they have time to review the current screen."""
-    input("Hit enter when you are ready to continue.")
-    
     
 def is_user_playing_again():
     """Asks if the user wants to play again by asking """
@@ -201,10 +225,12 @@ def play_game():
 
         At game end, the current score is provided.  If condition 1 or 2 were reached, the player is asked if they would like to play again.  If not, the game exits.
     """
+    new_game = True
     try:
-        # Playing is used to allow the user to continue playing rounds of trivia.
+        if new_game:
+            explain_game()
+            new_game = False
         playing = True
-        
         while playing:
             # Game is initialized by validating the input file, building the 'question bank' and initializing the score and 
             # the answered questions.
@@ -224,11 +250,14 @@ def play_game():
             playing = is_user_playing_again()    
     except KeyboardInterrupt:
         # If a round is exited prematurely, the current score is displayed.
-        print("")
-        print(final_score_message)
+        if not new_game:
+            print("")
+            print(final_score_message)
     except Exception as e:
         if hasattr(e, "message"):
             print(e.message)
 
     # exit() # remove when not testing
+
+
 play_game()
