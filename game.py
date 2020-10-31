@@ -1,7 +1,7 @@
 from os import name, system
 from sys import argv, exit
 from json import load
-from exceptions import InputFileError, InputArgumentsError
+from exceptions import InputFileError
 from random import randrange
 
 # The following 3 keys are expected for each queston in the "json_questions" JSON-format, input file.
@@ -20,7 +20,6 @@ def clear_terminal_window():
         system('clear')
 
 
-# The arguments passed in to the command line to run the game are validated to a one file input.
 def get_input_file():
     """Validates that the question data is provided as the only other command line argument."""
     if len(argv) == 1:
@@ -28,11 +27,9 @@ def get_input_file():
     elif len(argv) == 2:
         return argv[1]
     else:
-        raise InputArgumentsError ## look into ValueError instead here
-#  check here     ^^^^^^  
+        raise ValueError("Too many arguments provided. Provide the game with one JSON file of questions.")
+      
     
-# From the input file (json_questions), questions are parsed and validated into the "question_bank" of three 
-# dictionaries for questions, question_options, and question_answers.
 def get_key(key, question, question_id):
     """Validates the current key for the question and returns its value."""
     if question.get(key, None):
