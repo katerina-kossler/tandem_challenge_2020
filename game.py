@@ -162,10 +162,10 @@ def get_user_answer(ordered_options):
 
 
 def get_score_message(score, answered_questions=None, final=False):
-    clear_terminal_window()
     if final:
         return " Your final score is {} out of {} questions!".format(score, len(answered_questions))
     else:
+        print("That's Correct!")
         return "Your Score is now {}".format(score)
     
         
@@ -195,21 +195,13 @@ def play_trivia_question(score, answered_questions, questions, question_options,
     user_answer = get_user_answer(ordered_options)
     if user_answer == current_answer:
         score += 1
-        get_score_message(score)
+        print(get_score_message(score))
     else:
         reveal_correct_answer(current_question, current_answer)
     return score, answered_questions
 
-    
-def is_user_playing_again():
-    """Asks if the user wants to play again by asking """
-    choice = input("Would you like to play another round with this question bank? [Y/anything else]: ")
-    if choice == "Y":
-        return True
-    else:
-        return False
 
-
+# need to refactor this with where the questions are chosen, when the input file is processed, etc.
 def play_game():
     """Holds game logic and continues question asking and answering until the first of the following conditions is met:
         1) 10 questions are answered
@@ -218,42 +210,37 @@ def play_game():
 
         At game end, the current score is provided.  If condition 1 or 2 were reached, the player is asked if they would like to play again.  If not, the game exits.
     """
-    new_game = True
+    # need to rehandle how I show the ValueError / InputFileError to the user
+    input_file = get_input_file()
+    questions, question_options, question_answers = process_question_data(input_file)
     try:
-        if new_game:
-            explain_game()
-            new_game = False
         playing = True
         while playing:
-            # Game is initialized by validating the input file, 
-            # building the 'question bank' and initializing the score and the answered questions.
-            input_file = get_input_file()
-            questions, question_options, question_answers = process_question_data(input_file)
-            
             score = 0
             answered_questions = set()
             final_score_message = get_score_message(score, answered_questions, True)
+            
+            explain_game()
             
             while not is_game_end(questions, answered_questions):
                 score, answered_questions = play_trivia_question(score, 
                                                                  answered_questions, 
                                                                  questions, 
                                                                  question_options, 
-                                                                 question_answers)                                      
+                                                                 question_answers)    
+                pause_for_user()               
                 final_score_message = get_score_message(score, answered_questions, True)
-                pause_for_user()
+                
+            
             print(final_score_message)
-            playing = is_user_playing_again()    
+            choice = input("Would you like to play another round? [Y/anything else]: ")
+            if choice != "Y":
+                playing = False
     
     except KeyboardInterrupt:
         # If a round is exited prematurely, the current score is displayed.
-        if not new_game:
-            print("")
-            print(final_score_message)
-            
-    except Exception as e:
-        if hasattr(e, "message"):
-            print(e.message)
+        print("")
+        print(final_score_message)
 
 play_game()
 # exit() # remove when not testing
