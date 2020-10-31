@@ -1,23 +1,27 @@
-from os import name, system
+from os import name as os_name, system as os_system
 from sys import argv, exit
 from json import load
 from exceptions import InputFileError
 from random import randrange
+import curses # https://docs.python.org/3/howto/curses.html
 
-# The following 3 keys are expected for each queston in the "json_questions" JSON-format, input file.
+# JSON question keys from input file:
 QUESTION_KEY = "question"
 INCORRECT_OPTION_KEY = "incorrect"
 ANSWER_KEY = "correct"
-# Default question bank should be provided if not additional / custom questions are used.
+# Default input file name:
 DEFAULT_FILE = "Apprentice_TandemFor400_Data.json"
 
 
+# should replace with curses.clear() and get ride of this by using a curses wrapper is possible
+# also debating if should use  - os.system('cls' if os.name == 'nt' else 'clear')
+# not sure if that's not just more confusing
 def clear_terminal_window():
-    """Clears the terminal for clarity based on the os name.  Windows uses a command of 'cls' while Max and Linux use 'clear'."""
-    if name == 'nt': 
-        system('cls') 
+    """Clears the terminal for clarity based on the os name.  Windows uses a command of 'cls' while Mac and Linux use 'clear'."""
+    if os_name == 'nt': 
+        os_system('cls') 
     else: 
-        system('clear')
+        os_system('clear')
 
 
 def get_input_file():
@@ -38,6 +42,8 @@ def get_key(key, question, question_id):
         raise InputFileError(key, question_id)
 
 
+# the three map system seems confusing; 
+# need to build a question object and just shuffle a list of questions in a round
 def process_question_data(json_questions):
     """Takes in a JSON file of questions in the format:
     {"question": "<QUESTION>",
@@ -59,14 +65,17 @@ def process_question_data(json_questions):
         with open(json_questions) as json_file:
             data = load(json_file)
             for current_question_id, current_question_map in enumerate(data, 1):
-                questions[current_question_id] = 
-                    get_key(QUESTION_KEY, current_question_map, current_question_id)
+                questions[current_question_id] = get_key(QUESTION_KEY,      
+                                                        current_question_map, 
+                                                        current_question_id)
                 
-                question_options[current_question_id] = 
-                    set(get_key(INCORRECT_OPTION_KEY, current_question_map, current_question_id))
+                question_options[current_question_id] = set(get_key(INCORRECT_OPTION_KEY, 
+                                                                    current_question_map, 
+                                                                    current_question_id))
 
-                question_answers[current_question_id] = 
-                    get_key(ANSWER_KEY, current_question_map, current_question_id)
+                question_answers[current_question_id] = get_key(ANSWER_KEY, 
+                                                                current_question_map, 
+                                                                current_question_id)
                 
                 question_options[current_question_id].add(question_answers[current_question_id])
     return (questions, question_options, question_answers) 
@@ -74,11 +83,13 @@ def process_question_data(json_questions):
 
 def pause_for_user():
     """Waits for user to hit enter to continue so they have time to review the current screen."""
-    input("Hit enter when you are ready to continue.")
+    wait_message = "Hit enter when you are ready to continue."
+    input(wait_message)
      
- 
+# should play around with coloring the text here
 def explain_game():
     """Outputs the basic gameplay for this trivia game"""
+    # need to print this a bold and blue (?)
     print("""
     Welcome to the hottest new CLI game to hit your terminal!
      ______               __               ___              ____  ___   ___   __
@@ -110,6 +121,8 @@ def is_game_end(all_questions, answered_questions):
         return False
 
 
+# if i make the questions an object and stored them in a random way for the round
+# can just pop off the last round
 def select_question(questions, answered_questions):
     """Selects a new question at random from a set of question numbers until an unasked question is chosen"""
     while True:
@@ -148,29 +161,12 @@ def get_user_answer(ordered_options):
     return valid_choice
 
 
-def is_answer_correct(user_answer, current_answer):
-    """Compares the input user answer to the actual trivia answer"""
-    if user_answer == current_answer:
-        return True
-    else:
-        return False
-
-
-def display_score(score, answered_questions=None, final=False):
+def get_score_message(score, answered_questions=None, final=False):
+    clear_terminal_window()
     if final:
         return " Your final score is {} out of {} questions!".format(score, len(answered_questions))
     else:
         return "Your Score is now {}".format(score)
-        
-
-def update_score(score):
-    """Increases the current score and displays the updated score"""
-    clear_terminal_window()
-    score += 1
-    print("That's Correct!")
-    current = display_score(score)
-    print(current)
-    return score
     
         
 def reveal_correct_answer(current_question, current_answer):
@@ -197,9 +193,9 @@ def play_trivia_question(score, answered_questions, questions, question_options,
     # The options are returned as a dictionary of their option number by order of display to the user.
     ordered_options = display_question_and_options(current_question,current_options)
     user_answer = get_user_answer(ordered_options)
-    correct = is_answer_correct(user_answer, current_answer)
-    if correct:
-        score = update_score(score)
+    if user_answer == current_answer:
+        score += 1
+        get_score_message(score)
     else:
         reveal_correct_answer(current_question, current_answer)
     return score, answered_questions
@@ -236,15 +232,16 @@ def play_game():
             
             score = 0
             answered_questions = set()
-            final_score_message = display_score(score, answered_questions, True)
+            final_score_message = get_score_message(score, answered_questions, True)
+            
             while not is_game_end(questions, answered_questions):
-                score, answered_questions = play_trivia_question(score, answered_questions, questions, question_options, question_answers)                                 
+                score, answered_questions = play_trivia_question(score, 
+                                                                 answered_questions, 
+                                                                 questions, 
+                                                                 question_options, 
+                                                                 question_answers)                                      
+                final_score_message = get_score_message(score, answered_questions, True)
                 pause_for_user()
-                
-                # A final answer message is made in case this is 
-                # the last question to answer or if there is a
-                # KeyboardInterupt used to exit the game.
-                final_score_message = display_score(score, answered_questions, True)
             print(final_score_message)
             playing = is_user_playing_again()    
     
