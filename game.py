@@ -1,6 +1,6 @@
 from os import name as os_name, system as os_system
-from sys import argv, exit
-from json import load
+from sys import argv, exit # remove exit when not testing
+from json import load, loads
 from exceptions import InputFileError
 from random import randrange
 import curses # https://docs.python.org/3/howto/curses.html
@@ -44,7 +44,7 @@ def get_key(key, question, question_id):
 
 # the three map system seems confusing; 
 # need to build a question object and just shuffle a list of questions in a round
-def process_question_data(json_questions):
+def process_question_data(input_file):
     """Takes in a JSON file of questions in the format:
     {"question": "<QUESTION>",
     "incorrect": ["<INCORRECT_OPTION_1>", ..., "<INCORRECT_OPTION_X>"],
@@ -61,8 +61,8 @@ def process_question_data(json_questions):
     questions = {}
     question_options = {}
     question_answers = {}
-    if json_questions:
-        with open(json_questions) as json_file:
+    if input_file:
+        with open(input_file) as json_file:
             data = load(json_file)
             for current_question_id, current_question_map in enumerate(data, 1):
                 questions[current_question_id] = get_key(QUESTION_KEY,      
@@ -77,9 +77,8 @@ def process_question_data(json_questions):
                                                                 current_question_map, 
                                                                 current_question_id)
                 
-                question_options[current_question_id].add(question_answers[current_question_id])
-    return (questions, question_options, question_answers) 
-
+                question_options[current_question_id].add(question_answers[current_question_id]) 
+    return (questions, question_options, question_answers)
 
 def pause_for_user():
     """Waits for user to hit enter to continue so they have time to review the current screen."""
@@ -208,7 +207,8 @@ def play_game():
         2) All available questions are answered
         3) The game is exited with CTRL+C or Delete
 
-        At game end, the current score is provided.  If condition 1 or 2 were reached, the player is asked if they would like to play again.  If not, the game exits.
+    At game end, the current score is provided.  If condition 1 or 2 were reached, 
+    the player is asked if they would like to play again.  If not, the game exits.
     """
     # need to rehandle how I show the ValueError / InputFileError to the user
     input_file = get_input_file()
@@ -242,5 +242,6 @@ def play_game():
         print("")
         print(final_score_message)
 
-play_game()
-# exit() # remove when not testing
+
+if __name__ == "__main__":
+    play_game()
