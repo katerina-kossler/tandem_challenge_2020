@@ -10,7 +10,7 @@
   2. the answer choices, 
   3. the correct answer upon submission, 
   4. and their score
-  4. can be a a UI, command-line-tool, etc 
+  4. can be a UI, command-line-tool, etc 
 
 - Key Concepts to Demonstrate:
   1. Arrays and Loops
@@ -23,7 +23,7 @@
   2. All questions are multiple-choice questions
   3. Your score does not need to update in real time
   4. Results can update on form submit, button click, or any other interaction
-  5. trivia data (questions, correct and incorrect answers) is provided via a JSON file.
+  5. Trivia data (questions, correct and incorrect answers) is provided via a JSON file.
   
 - Acceptance Criteria
   1. A user can view questions.
@@ -48,19 +48,22 @@ also list any system dependencies (e.g. Ruby 2.3, Erlang runtime, JDK8, etc).
 ### Notes
 #### Plan:
 - MVP:
-  CL-game built using Python.
-  User types the selected answer from the available options and hits enter to submit the selection. Game proceeds until 10 Q have been answered.
-  Add unit testing to the key functions.
-  Handles / Rejects incorrect user inputs.
-- Additional Features:
-  Application that can ran locally (include JSON file in opening the application & exit with CTRL+C)
-  UI using React in some capacity.
-  Tracks player information while running. 
-  (Simple SQL BD to store player scores and Q/As)
+  1. CL-game built using Python.
+  2. User types the selected answer from the available options and hits enter to submit the selection. 
+  3. Game proceeds until 10 Q have been answered. 
+  4. Application that can ran locally (can include JSON file in opening the application & exit with CTRL+C). 
+  5. Key functions are covered by unit tests.
   
-  Function to upload new Q/A (download example JSON file).
-  Function to validate file upload. 
+- Additional Features:
+  1. Simple UI: Using Flask / Jinja / React in some capacity.
+  2. Questions are randomly displayed and the user clicks their selection. After clicking, the correct answer is revealed, score is updated. 
+  3. Click move on to next question. 
+  4. Once round is over, final score is shown along with condensed view of seen questions and their answers (maybe conditional coloring if the question was correct or not).
+  5. Tracks player information either while running or with a simple SQL DB. Could store player's past scores and successful input files - like a nice arcade game).
+  6. Function to upload new Q/A JSON file (should need validation to play with anything other than the default file).
+  
 #### To-do list:
+##### MVP:
 - [X] Process JSON File: need to parse, store, validate (num of Q and options for each Q)
 - [X] Select current question
 - [X] Score keeping / update score
@@ -68,14 +71,20 @@ also list any system dependencies (e.g. Ruby 2.3, Erlang runtime, JDK8, etc).
 - [X] Validate user selection / input
 - [X] Check the selected answer
 - [X] Provide end of game score and option to replay with current input set
+- [ ] Add unit testing to the key functions.
+##### Additional Features:
+- [ ] 
+- [ ]
+- [ ]
+- [ ]
 
-#### Expanded Assumptions
-1. A round of trivia has 10 Questions
-2. All questions are multiple-choice questions
-3. Your score does not need to update in real time
-4. Results can update on form submit, button click, or any other interaction
-5. trivia data (questions, correct and incorrect answers) is provided via a JSON file.
-----------------------------------------------------
-6. Score is calculated as the sum of correct answers
 
-### Instructions on Use
+### Instructions
+- Running the application: 
+1. Run the game by navigating into the game_folder (along with a JSON file of questions if you have custom ones you want to run)
+2. Run the following:
+```
+python3 game.py [file.json - optional]
+```
+3. Play through by typing your answers and submitting by hitting enter.
+4. Exit at any time using Ctrl+C.

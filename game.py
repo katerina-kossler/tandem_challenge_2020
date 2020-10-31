@@ -29,7 +29,7 @@ def get_input_file():
         return argv[1]
     else:
         raise InputArgumentsError ## look into ValueError instead here
-#               ^^^^^^  
+#  check here     ^^^^^^  
     
 # From the input file (json_questions), questions are parsed and validated into the "question_bank" of three 
 # dictionaries for questions, question_options, and question_answers.
@@ -62,9 +62,15 @@ def process_question_data(json_questions):
         with open(json_questions) as json_file:
             data = load(json_file)
             for current_question_id, current_question_map in enumerate(data, 1):
-                questions[current_question_id] = get_key(QUESTION_KEY, current_question_map, current_question_id)
-                question_options[current_question_id] = set(get_key(INCORRECT_OPTION_KEY, current_question_map, current_question_id))
-                question_answers[current_question_id] = get_key(ANSWER_KEY, current_question_map, current_question_id)
+                questions[current_question_id] = 
+                    get_key(QUESTION_KEY, current_question_map, current_question_id)
+                
+                question_options[current_question_id] = 
+                    set(get_key(INCORRECT_OPTION_KEY, current_question_map, current_question_id))
+
+                question_answers[current_question_id] = 
+                    get_key(ANSWER_KEY, current_question_map, current_question_id)
+                
                 question_options[current_question_id].add(question_answers[current_question_id])
     return (questions, question_options, question_answers) 
 
@@ -109,14 +115,11 @@ def is_game_end(all_questions, answered_questions):
 
 def select_question(questions, answered_questions):
     """Selects a new question at random from a set of question numbers until an unasked question is chosen"""
-    limit = len(questions)
-    seen = True
-    while seen:
-        selected_question = randrange(0, limit)
+    while True:
+        selected_question = randrange(0, len(questions))
         if not selected_question in answered_questions:
             answered_questions.add(selected_question)
-            seen = False
-    return selected_question, answered_questions
+            return selected_question, answered_questions
 
 
 def display_question_and_options(current_question, current_options):
@@ -229,27 +232,31 @@ def play_game():
             new_game = False
         playing = True
         while playing:
-            # Game is initialized by validating the input file, building the 'question bank' and initializing the score and 
-            # the answered questions.
+            # Game is initialized by validating the input file, 
+            # building the 'question bank' and initializing the score and the answered questions.
             input_file = get_input_file()
             questions, question_options, question_answers = process_question_data(input_file)
+            
             score = 0
             answered_questions = set()
             final_score_message = display_score(score, answered_questions, True)
             while not is_game_end(questions, answered_questions):
                 score, answered_questions = play_trivia_question(score, answered_questions, questions, question_options, question_answers)                                 
                 pause_for_user()
+                
                 # A final answer message is made in case this is 
                 # the last question to answer or if there is a
                 # KeyboardInterupt used to exit the game.
                 final_score_message = display_score(score, answered_questions, True)
             print(final_score_message)
             playing = is_user_playing_again()    
+    
     except KeyboardInterrupt:
         # If a round is exited prematurely, the current score is displayed.
         if not new_game:
             print("")
             print(final_score_message)
+            
     except Exception as e:
         if hasattr(e, "message"):
             print(e.message)
