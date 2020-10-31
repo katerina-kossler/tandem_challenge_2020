@@ -1,16 +1,19 @@
 from os import name as os_name, system as os_system
-from sys import argv, exit # remove exit when not testing
+from sys import argv # , exit # remove exit when not testing
 from json import load, loads
 from exceptions import InputFileError
 from random import randrange
+# clean these comments up once new libs are implemented
 import curses # https://docs.python.org/3/howto/curses.html
+import argparse
 
-# JSON question keys from input file:
+
+# Default keys in the input JSON file:
 QUESTION_KEY = "question"
 INCORRECT_OPTION_KEY = "incorrect"
 ANSWER_KEY = "correct"
 # Default input file name:
-DEFAULT_FILE = "Apprentice_TandemFor400_Data.json"
+INPUT_FILE = "Apprentice_TandemFor400_Data.json"
 
 
 # should replace with curses.clear() and get ride of this by using a curses wrapper is possible
@@ -22,16 +25,6 @@ def clear_terminal_window():
         os_system('cls') 
     else: 
         os_system('clear')
-
-
-def get_input_file():
-    """Validates that the question data is provided as the only other command line argument."""
-    if len(argv) == 1:
-        return DEFAULT_FILE
-    elif len(argv) == 2:
-        return argv[1]
-    else:
-        raise ValueError("Too many arguments provided. Provide the game with one JSON file of questions.")
       
     
 def get_key(key, question, question_id):
@@ -201,7 +194,7 @@ def play_trivia_question(score, answered_questions, questions, question_options,
 
 
 # need to refactor this with where the questions are chosen, when the input file is processed, etc.
-def play_game():
+def play_game(input_file):
     """Holds game logic and continues question asking and answering until the first of the following conditions is met:
         1) 10 questions are answered
         2) All available questions are answered
@@ -211,7 +204,6 @@ def play_game():
     the player is asked if they would like to play again.  If not, the game exits.
     """
     # need to rehandle how I show the ValueError / InputFileError to the user
-    input_file = get_input_file()
     questions, question_options, question_answers = process_question_data(input_file)
     try:
         playing = True
@@ -223,11 +215,14 @@ def play_game():
             explain_game()
             
             while not is_game_end(questions, answered_questions):
-                score, answered_questions = play_trivia_question(score, 
-                                                                 answered_questions, 
-                                                                 questions, 
-                                                                 question_options, 
-                                                                 question_answers)    
+                score, answered_questions = play_trivia_question(
+                    score, 
+                    answered_questions, 
+                    questions, 
+                    question_options, 
+                    question_answers
+                )    
+                
                 pause_for_user()               
                 final_score_message = get_score_message(score, answered_questions, True)
                 
@@ -244,4 +239,65 @@ def play_game():
 
 
 if __name__ == "__main__":
-    play_game()
+    input_parser = argparse.ArgumentParser(
+        description="Answer a random subset of trivia questions from an input JSON file."
+    )
+    input_parser.add_argument(
+        "--questions_file",
+        type=argparse.FileType("r"),
+        help="Enter the JSON file of questions you want to use here.",
+        default=INPUT_FILE,
+        required=False
+    )
+    
+    # if time to support parsing multiple files:
+    # input_parser.add_argument(
+    #     "--questions_file",
+    #     type=argparse.FileType("r"),
+    #     nargs="+",
+    #     help="Enter the JSON file(s) of questions you want to use here.",
+    #     default=INPUT_FILE,
+    #     required=False
+    # )
+    
+    input_parser.add_argument(
+        "--question",
+        type=str,
+        help="The 'question' key for all questions in the JSON file.",
+        default=QUESTION_KEY
+    )
+    input_parser.add_argument(
+        "--incorrect_options",
+        type=str,
+        help="The 'incorrect options' key for all questions in the JSON file.",
+        default=INCORRECT_OPTION_KEY
+    )
+    input_parser.add_argument(
+        "--answer",
+        type=str,
+        help="The 'answer' key for all questions in the JSON file.",
+        default=ANSWER_KEY
+    )
+    args = input_parser.parse_args()
+    
+    if args.question:
+        QUESTION_KEY = args.question
+    if args.incorrect_options:
+        INCORRECT_OPTION_KEY = args.incorrect_options
+    if args.answer:
+        ANSWER_KEY = args.answer
+    if args.questions_file:
+        if ".json" in args.questions_file.name:
+            try:
+                input_file = load(args.questions_file)
+            except Exception as e:
+                print('hi')
+                raise argparse.ArgumentTypeError(
+                    "Input file '{}' is not a valid JSON file. Error: {}".format(
+                        args.questions_file.name,
+                        e
+                    )
+                )
+    else:
+        input_file = load(INPUT_FILE)
+    play_game(input_file)
