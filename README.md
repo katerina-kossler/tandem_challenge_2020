@@ -1,9 +1,50 @@
 # Tandem Challenge 
-#### Katerina Kossler's Coding Challenge for Tandem's 2021 Software Engineering Apprenticeship
+#### Katerina Kossler's Submission for Tandem's 2021 Software Engineering Apprenticeship
+
+### Instructions:
+- System Dependencies: Python 3.9.0
+- Other requirements: Stored in a requirements.txt
+- Running the application: 
+  1. Run the game by navigating into the game_folder 
+    (Move in any custom JSON file(s) of questions you want to play with)
+2. Install all requirements
+3. Run the following (note - your version of Python 3.9.0 may be aliased as 'python'):
+```
+python3 game.py [JSON file of questions (optional)]
+```
+like the following options:
+```
+python3 game.py
+python3 game.py Apprentice_TandemFor400_Data.json
+python3 game.py more_questions.json
+```
+3. Play through by typing your answer as the option number or the full option test.
+4. Submit your selection with enter.
+5. Play to the first of 10 questions or all the questions available.
+6. Play as many rounds as you want.
+7. Exit at any time using Ctrl+C.
+
+### Notes
+##### MVP:
+- [X] Process JSON File: need to parse, store, validate (num of Q and options for each Q)
+- [X] Select current question
+- [X] Score keeping / update score
+- [X] Determine game state (question number and score)
+- [X] Validate user selection / input
+- [X] Check the selected answer
+- [X] Provide end of game score and option to replay with current input set
+- [ ] Add unit testing to the key functions.
+##### Additional Features:
+- [ ] Add question class
+- [ ] Reconfigure how questions are randomized / reused (between rounds)
+- [ ] Add coloring for the game summary, and incorrect and correct answers
+- [ ] Add ability to input more than one JSON file of questions 
+  - [ ] Check for question uniqueness
+  - [ ] Only parse valid files
 
 ### Problem Scope
 #### Tandem for 400!
-##### Create an application to improve a user's trivia skills by displaying multiple-choice trivia questions to answer
+- Create an application to improve a user's trivia skills by displaying multiple-choice trivia questions to answer.
 
 - MVP:
   1. player can view: the question(s), 
@@ -42,49 +83,4 @@ question for this).
 - Please exclude any binaries or dependencies that can be built or resolved via a
 package manager (remember to .gitignore those node_modules!).
 - Your submission must include instructions for how to run your code. 
-- You must
-also list any system dependencies (e.g. Ruby 2.3, Erlang runtime, JDK8, etc).
-
-### Notes
-#### Plan:
-- MVP:
-  1. CL-game built using Python.
-  2. User types the selected answer from the available options and hits enter to submit the selection. 
-  3. Game proceeds until 10 Q have been answered. 
-  4. Application that can ran locally (can include JSON file in opening the application & exit with CTRL+C). 
-  5. Key functions are covered by unit tests.
-  
-- Additional Features:
-  1. Simple UI: Using Flask / Jinja / React in some capacity.
-  2. Questions are randomly displayed and the user clicks their selection. After clicking, the correct answer is revealed, score is updated. 
-  3. Click move on to next question. 
-  4. Once round is over, final score is shown along with condensed view of seen questions and their answers (maybe conditional coloring if the question was correct or not).
-  5. Tracks player information either while running or with a simple SQL DB. Could store player's past scores and successful input files - like a nice arcade game).
-  6. Function to upload new Q/A JSON file (should need validation to play with anything other than the default file).
-  
-#### To-do list:
-##### MVP:
-- [X] Process JSON File: need to parse, store, validate (num of Q and options for each Q)
-- [X] Select current question
-- [X] Score keeping / update score
-- [X] Determine game state (question number and score)
-- [X] Validate user selection / input
-- [X] Check the selected answer
-- [X] Provide end of game score and option to replay with current input set
-- [ ] Add unit testing to the key functions.
-##### Additional Features:
-- [ ] 
-- [ ]
-- [ ]
-- [ ]
-
-
-### Instructions
-- Running the application: 
-1. Run the game by navigating into the game_folder (along with a JSON file of questions if you have custom ones you want to run)
-2. Run the following:
-```
-python3 game.py [file.json - optional]
-```
-3. Play through by typing your answers and submitting by hitting enter.
-4. Exit at any time using Ctrl+C.
+- You must also list any system dependencies (e.g. Ruby 2.3, Erlang runtime, JDK8, etc).
