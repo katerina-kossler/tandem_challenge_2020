@@ -1,11 +1,11 @@
 import sys
 from os import name as os_name, system as os_system
-from json import load, loads
+from json import load
 from exceptions import InputFileError
 from random import shuffle
 import argparse
-from colorama import init
-from termcolor import cprint
+from colorama import init #https://pypi.org/project/colorama/
+from termcolor import cprint #https://pypi.org/project/termcolor/
 init() # to have termcolor supported on Windows
 
 def clear_terminal_window():
@@ -215,6 +215,11 @@ class Game():
             # If a round is exited prematurely, the current score is displayed.
             print("")
             print(final_score_message)
+
+# to do:
+
+# add unit tests
+# fix comments
 
 
 if __name__ == "__main__":

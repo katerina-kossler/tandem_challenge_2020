@@ -2,8 +2,11 @@
 #### Katerina Kossler's Submission for Tandem's 2021 Software Engineering Apprenticeship
 
 ### Instructions:
-- System Dependencies: Python 3.9.0
+- System Dependencies: Python 3.9.0, (pip 20.2.4)
 - Other requirements: Stored in a requirements.txt
+  ```
+  pip install -r requirements.txt
+  ```
 - Running the application: 
   1. Run the game by navigating into the game_folder 
     (Move in any custom JSON file(s) of questions you want to play with)
