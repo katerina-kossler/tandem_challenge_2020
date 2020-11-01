@@ -35,12 +35,9 @@ python3 game.py more_questions.json
 - [X] Provide end of game score and option to replay with current input set
 - [ ] Add unit testing to the key functions.
 ##### Additional Features:
-- [ ] Add question class
-- [ ] Reconfigure how questions are randomized / reused (between rounds)
-- [ ] Add coloring for the game summary, and incorrect and correct answers
-- [ ] Add ability to input more than one JSON file of questions 
-  - [ ] Check for question uniqueness
-  - [ ] Only parse valid files
+- [X] Add question class (and TriviaRound and Game classes)
+- [X] Reconfigure how questions are randomized / reused (between rounds)
+- [X] Add coloring for the game summary, and incorrect and correct answers
 
 ### Problem Scope
 #### Tandem for 400!
