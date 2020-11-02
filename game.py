@@ -194,6 +194,7 @@ class Game():
         At game end, the current score is provided.  If condition 1 or 2 were reached, 
         the player is asked if they would like to play again.  If not, the game exits.
         """
+        playing = False
         questions = self.process_question_data()
         trivia_round = TriviaRound(questions)
         try:
@@ -225,8 +226,11 @@ class Game():
         # If a round is exited prematurely using ctrl+C, the current score is displayed.
         except KeyboardInterrupt:
             print("")
-            print(final_score_message)
-
+            if playing:
+                print(final_score_message)
+                cprint("Have a good one!","green")
+            else:
+                cprint("Have a good one!","blue")
 
 if __name__ == "__main__":
     
@@ -252,18 +256,16 @@ if __name__ == "__main__":
                               default="correct")
     args = input_parser.parse_args()
 
-    if args.questions_file:
-        if ".json" in args.questions_file.name:
-            try:
-                load(args.questions_file)
-            except Exception as e:
-                print('hi')
-                raise argparse.ArgumentTypeError(
-                    "Input file '{}' is not a valid JSON file. Error: {}".format(
-                        args.questions_file.name,
-                        e
-                    )
+    if ".json" in args.questions_file.name:
+        try:
+            load(args.questions_file)
+        except Exception as e:
+            raise argparse.ArgumentTypeError(
+                "Input file '{}' is not a valid JSON file. Error: {}".format(
+                    args.questions_file.name,
+                    e
                 )
+            )
     game = Game(input_file=args.questions_file.name,
                 question_key=args.question,
                 incorrect_options_key=args.incorrect_options,
