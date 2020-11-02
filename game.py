@@ -9,7 +9,7 @@ from termcolor import cprint #https://pypi.org/project/termcolor/
 init() # to have termcolor supported on Windows
 
 def clear_terminal_window():
-    """Clears the terminal for clarity based on the os name.  Windows uses a command of 'cls' while Mac and Linux use 'clear'."""
+    """Clears the terminal screen. Windows uses a command of 'cls' while Mac and Linux use 'clear'."""
     if os_name == 'nt': 
         os_system('cls') 
     else: 
@@ -49,6 +49,7 @@ class Question():
         return valid_choice 
         
     def reveal_result(self, correct):
+        """Prints out a phrase and colors the Q/A based on if the user was correct"""
         if correct:
             cprint("Ding! Ding! That's Correct!","green")
             cprint("Q: {}".format(self.question),"green")
@@ -67,18 +68,27 @@ class TriviaRound():
         self.score = 0
         
     def build_new_round(self):
+        """Resets the score and selects questions to ask based on
+        how the previous round(s) went and the amount of questions available"""
         self.score = 0
-        # add comments
+        # If there are 10+ incorrect questions from previous rounds, 
+        # those should be used for the next round
         if len(self.incorrect_questions) >= 10:
             shuffle(self.incorrect_questions)
             while (len(self.questions_to_ask) < 10):
                 self.questions_to_ask.append(self.incorrect_questions.pop())
+        # If at least 10 questions are available from the incorrect and unasked questions
+        # selection should from incorrect questions and then unasked questions
         elif (len(self.unused_questions) + len(self.incorrect_questions)) >= 10:
             while self.incorrect_questions:
                 self.questions_to_ask.append(self.incorrect_questions.pop()) 
             while len(self.questions_to_ask) < 10:    
                 self.questions_to_ask.append(self.unused_questions.pop())
             shuffle(self.questions_to_ask)
+        # If too many questions have been asked and/or answered correctly,
+        # (or if less than 10 questions are available) 
+        # all the questions should go into the stack of unasked questions and 
+        # shuffled for use in the next round.
         else:
             self.unused_questions.extend(self.incorrect_questions)
             self.incorrect_questions = []
@@ -89,6 +99,8 @@ class TriviaRound():
                 self.questions_to_ask.append(self.unused_questions.pop())
         
     def play_trivia_question(self):
+        """Removes the top question off the 'to ask' stack, asks the question, and
+        collects a valid answer."""
         question = self.questions_to_ask.pop()
         user_answer = question.ask()
         if user_answer == question.answer:
@@ -177,7 +189,7 @@ class Game():
         """Holds game logic and continues question asking and answering until the first of the following conditions is met:
             1) 10 questions are answered
             2) All available questions are answered
-            3) The game is exited with CTRL+C or Delete
+            3) The game is exited with CTRL+C
 
         At game end, the current score is provided.  If condition 1 or 2 were reached, 
         the player is asked if they would like to play again.  If not, the game exits.
@@ -210,15 +222,10 @@ class Game():
                 print(score)
             cprint("Have a good one!","blue")
         
+        # If a round is exited prematurely using ctrl+C, the current score is displayed.
         except KeyboardInterrupt:
-            # If a round is exited prematurely, the current score is displayed.
             print("")
             print(final_score_message)
-
-# to do:
-
-# add unit tests
-# fix comments
 
 
 if __name__ == "__main__":
