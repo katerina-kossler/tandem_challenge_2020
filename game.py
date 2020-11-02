@@ -1,7 +1,7 @@
 import sys
 from os import name as os_name, system as os_system
 from json import load
-from exceptions import InputFileKeyError, InputFileValueError
+from exceptions import InputFileError
 from random import shuffle
 import argparse
 from colorama import init #https://pypi.org/project/colorama/
@@ -150,20 +150,14 @@ class Game():
                 question = self.get_key(self.question_key,      
                                     current_question, 
                                     current_number)
-                if not question:
-                    raise InputFileValueError(self.question_key, current_number)
                 
                 options = self.get_key(self.incorrect_options_key, 
                                     current_question, 
                                     current_number)
-                if len(options) == 0:
-                    raise InputFileValueError(self.incorrect_options_key, current_number)
                 
                 answer = self.get_key(self.answer_key, 
                                     current_question, 
                                     current_number)
-                if not answer:
-                    raise InputFileValueError(self.answer_key, current_number)
                 options.append(answer)
                 
                 new_question = Question(question, options, answer)
