@@ -98,7 +98,7 @@ class TriviaRound():
             self.unused_questions.extend(self.correct_questions)
             self.correct_questions = []
             shuffle(self.unused_questions)
-            while self.unused_questions or len(self.questions_to_ask) < 10:
+            while len(self.unused_questions) > 0 and len(self.questions_to_ask) < 10:
                 self.questions_to_ask.append(self.unused_questions.pop())
         
     def play_trivia_question(self):
@@ -115,7 +115,10 @@ class TriviaRound():
             question.reveal_result(correct=False)
     
     def get_score_message(self):
-        return "Your final score is {} points!".format(self.score)
+        if self.score == 1:
+            return "Your final score is 1 point!"
+        else:
+            return "Your final score is {} points!".format(self.score)
     
     
 class Game():
@@ -131,7 +134,7 @@ class Game():
         if question.get(key, None):
             return question[key]
         else:
-            raise InputFileKeyError(key, question_id)
+            raise InputFileError(key, question_id)
 
     def process_question_data(self):
         """Takes in a JSON file of questions in the format:
@@ -162,6 +165,8 @@ class Game():
                 
                 new_question = Question(question, options, answer)
                 all_questions.append(new_question)
+            if not all_questions:
+                raise Exception("No questions found in input file.")
         return all_questions
         
     def pause_for_user(self):
@@ -211,9 +216,9 @@ class Game():
                 final_score_message = trivia_round.get_score_message()
                 
                 while len(trivia_round.questions_to_ask) > 0:
-                    trivia_round.play_trivia_question()
-                    self.pause_for_user()               
+                    trivia_round.play_trivia_question()         
                     final_score_message = trivia_round.get_score_message()
+                    self.pause_for_user() 
                 
                 print(final_score_message)
                 self.scores.append(trivia_round.score)
@@ -224,9 +229,11 @@ class Game():
                 else:
                     playing = False
                     
+            clear_terminal_window()
             print("Here were your scores from this game:")
-            for score in self.scores:
-                print(score)
+            for trivia_round, score in enumerate(self.scores,1):
+                print("Round {}: {}".format(trivia_round,score))
+            print("")
             cprint("Have a good one!","blue")
         
         # If a round is exited prematurely using ctrl+C, the current score is displayed.
