@@ -182,7 +182,6 @@ class Game():
         At game end, the current score is provided.  If condition 1 or 2 were reached, 
         the player is asked if they would like to play again.  If not, the game exits.
         """
-        # need to rehandle how I show the ValueError / InputFileError to the user
         questions = self.process_question_data()
         trivia_round = TriviaRound(questions)
         try:
@@ -230,7 +229,7 @@ if __name__ == "__main__":
     input_parser.add_argument("--questions_file",
                               type=argparse.FileType("r"),
                               help="Enter the JSON file of questions you want to use here (default: 'Apprentice_TandemFor400_Data.json').",
-                              default="Apprentice_TandemFor400_Data.json",
+                              default="./Apprentice_TandemFor400_Data.json",
                               metavar="JSONFILE")
     input_parser.add_argument("--question",
                               type=str,
