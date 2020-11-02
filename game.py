@@ -1,19 +1,21 @@
 import sys
 from os import name as os_name, system as os_system
 from json import load
-from exceptions import InputFileError
+from exceptions import InputFileKeyError, InputFileValueError
 from random import shuffle
 import argparse
 from colorama import init #https://pypi.org/project/colorama/
 from termcolor import cprint #https://pypi.org/project/termcolor/
 init() # to have termcolor supported on Windows
 
+
 def clear_terminal_window():
     """Clears the terminal screen. Windows uses a command of 'cls' while Mac and Linux use 'clear'."""
     if os_name == 'nt': 
-        os_system('cls') 
+        return os_system('cls') 
     else: 
-        os_system('clear')
+        return os_system('clear')
+
 
 class Question():
     def __init__(self, question, options, answer):
@@ -58,6 +60,7 @@ class Question():
             cprint("Oh, and that's a bad miss!","red")
             cprint("Q: {}".format(self.question),"red")
             cprint("A: {}".format(self.answer),"red")
+
 
 class TriviaRound():
     def __init__(self, unused_questions, incorrect_questions=[], correct_questions=[]):
@@ -114,6 +117,7 @@ class TriviaRound():
     def get_score_message(self):
         return "Your final score is {} points!".format(self.score)
     
+    
 class Game():
     def __init__(self, input_file, question_key, incorrect_options_key, answer_key):
         self.question_key = question_key
@@ -127,7 +131,7 @@ class Game():
         if question.get(key, None):
             return question[key]
         else:
-            raise InputFileError(key, question_id)
+            raise InputFileKeyError(key, question_id)
 
     def process_question_data(self):
         """Takes in a JSON file of questions in the format:
@@ -146,12 +150,20 @@ class Game():
                 question = self.get_key(self.question_key,      
                                     current_question, 
                                     current_number)
+                if not question:
+                    raise InputFileValueError(self.question_key, current_number)
+                
                 options = self.get_key(self.incorrect_options_key, 
                                     current_question, 
                                     current_number)
+                if len(options) == 0:
+                    raise InputFileValueError(self.incorrect_options_key, current_number)
+                
                 answer = self.get_key(self.answer_key, 
                                     current_question, 
                                     current_number)
+                if not answer:
+                    raise InputFileValueError(self.answer_key, current_number)
                 options.append(answer)
                 
                 new_question = Question(question, options, answer)
@@ -232,8 +244,8 @@ class Game():
             else:
                 cprint("Have a good one!","blue")
 
+
 if __name__ == "__main__":
-    
     input_parser = argparse.ArgumentParser(
         description="Answer a random subset of trivia questions from an input JSON file."
     )
