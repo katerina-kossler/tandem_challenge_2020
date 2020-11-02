@@ -10,22 +10,22 @@
 - Running the application: 
   1. Run the game by navigating into the game_folder 
     (Move in any custom JSON file(s) of questions you want to play with)
-2. Install all requirements
-3. Run the following (note - your version of Python 3.9.0 may be aliased as 'python'):
-```
-python3 game.py [JSON file of questions (optional)]
-```
-like the following options:
-```
-python3 game.py
-python3 game.py Apprentice_TandemFor400_Data.json
-python3 game.py more_questions.json
-```
-3. Play through by typing your answer as the option number or the full option test.
-4. Submit your selection with enter.
-5. Play to the first of 10 questions or all the questions available.
-6. Play as many rounds as you want.
-7. Exit at any time using Ctrl+C.
+  2. Install all requirements
+  3. Run the following (note - your version of Python 3.9.0 may be aliased as 'python'):
+    ```
+    python3 game.py [JSON file of questions (optional)]
+    ```
+    "Apprentice_TandemFor400_Data.json" is used as the default file of questions if one is not provided.
+    ```
+    python3 game.py
+    python3 game.py Apprentice_TandemFor400_Data.json
+    ```
+    (Note: There are also several JSON files that were used in manual testing of the game available for use.)
+  3. Play through by typing your answer as the option number or the full option test.
+  4. Submit your selection with enter.
+  5. Play to the first of 10 questions or all the questions available.
+  6. Play as many rounds as you want.
+  7. Exit at any time using Ctrl+C.
 
 ### Notes
 ##### MVP:

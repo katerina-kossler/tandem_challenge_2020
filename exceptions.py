@@ -1,6 +1,5 @@
 # Custom exceptions in this file are to be used for supporting the validation of game.py .
 
-
 class InputFileError(Exception):
     """Exception raised for Key errors in the input file.
     
